@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<scene title="vibemotion test project" width="1080" height="1080" exportWidth="1080" exportHeight="1920" precompose="dynamicResolution" bgcolor="#ff000000" totalTime="6000" fps="60" modifiedTime="1760000000000" amver="1002351" ffver="106" am="com.alightcreative.motion/5.0.270.1002578" amplatform="android" retime="freeze" retimeAdaptFPS="false">
+  <media uri="content://media/external/video/media/1" filename="clip_a.mp4" title="clip_a.mp4" type="video/mp4" duration="10000000" size="1000000" fps="0.60" orientation="0" infoUpdated="1760000000000" width="1080" height="1920" />
+  <media uri="content://media/external/video/media/2" filename="clip_b.mp4" title="clip_b.mp4" type="video/mp4" duration="10000000" size="1000000" fps="0.60" orientation="0" infoUpdated="1760000000000" width="1080" height="1920" />
+  <shape id="1001" label="Layer A (shake + glow)" startTime="0" endTime="360" fillType="media" fillVideo="content://media/external/video/media/1" outTime="360" mediaFillMode="fill" s=".rect">
+    <transform>
+      <location value="540.000000,540.000000,0.000000" />
+      <scale value="1.000000,1.000000" />
+    </transform>
+    <effect id="com.alightcreative.effects.oscillate3" locallyApplied="true">
+      <property name="direction" type="int" value="0" />
+      <property name="angle" type="float">
+        <kf t="0.000000" v="20.000000" />
+        <kf t="3.000000" v="160.000000" />
+      </property>
+      <property name="frequency" type="float" value="6.000000" />
+      <property name="amplitude" type="float">
+        <kf t="0.000000" v="40.000000" />
+        <kf t="1.500000" v="120.000000" />
+        <kf t="3.000000" v="20.000000" />
+      </property>
+    </effect>
+    <effect id="com.alightcreative.effects.glow" locallyApplied="true">
+      <property name="radius" type="float" value="0.150000" />
+      <property name="intensity" type="float" value="1.600000" />
+      <property name="threshold" type="float" value="0.500000" />
+    </effect>
+  </shape>
+  <shape id="1002" label="Layer B (rgb split + blur)" startTime="180" endTime="540" fillType="media" fillVideo="content://media/external/video/media/2" outTime="360" mediaFillMode="fill" s=".rect">
+    <transform>
+      <location value="540.000000,540.000000,0.000000" />
+      <scale value="1.200000,1.200000" />
+    </transform>
+    <effect id="com.alightcreative.effects.rgbsep" locallyApplied="true">
+      <property name="strength" type="float">
+        <kf t="0.000000" v="0.000000" />
+        <kf t="1.000000" v="0.060000" />
+        <kf t="3.000000" v="0.010000" />
+      </property>
+      <property name="angle" type="float" value="45.000000" />
+    </effect>
+    <effect id="com.alightcreative.effects.gaussianblur" locallyApplied="true">
+      <property name="strength" type="float" value="0.030000" />
+    </effect>
+  </shape>
+</scene>

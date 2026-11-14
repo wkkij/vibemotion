@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; connect-src 'self' blob:; media-src blob: file:; img-src 'self' data: blob: file:">
+  <title>vibemotion</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="i18n.js"></script>
+</head>
+<body>
+  <!-- Главный экран: проекты -->
+  <div id="home-screen" class="home-screen">
+    <div class="home-bg" aria-hidden="true">
+      <div class="home-orb orb-1"></div>
+      <div class="home-orb orb-2"></div>
+      <div class="home-grid"></div>
+    </div>
+
+    <div class="home-shell">
+      <header class="home-header">
+        <div class="home-brand">
+          <div class="home-logo-wrap" aria-hidden="true">
+            <svg class="home-logo-svg" width="46" height="46" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="vmGrad1" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#ffb347"/>
+                  <stop offset="52%" stop-color="#ff7a1a"/>
+                  <stop offset="100%" stop-color="#e03a00"/>
+                </linearGradient>
+                <linearGradient id="vmGrad2" x1="12" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#ffe2c2" stop-opacity="0.82"/>
+                </linearGradient>
+              </defs>
+              <rect class="logo-card" x="4" y="4" width="40" height="40" rx="13" fill="url(#vmGrad1)"/>
+              <rect x="4.75" y="4.75" width="38.5" height="38.5" rx="12.25" stroke="white" stroke-opacity="0.22" stroke-width="1.5"/>
+              <path class="logo-wave" d="M11 29.5C15.5 29.5 17 17.5 22.5 17.5C28 17.5 29 31.5 34.5 25.5L37 22.5" stroke="white" stroke-opacity="0.35" stroke-width="2.2" stroke-linecap="round"/>
+              <path class="logo-v" d="M15.5 16.5L24 32.5L32.5 16.5" stroke="url(#vmGrad2)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle class="logo-spark" cx="34.5" cy="14.5" r="2.3" fill="#fff1c9"/>
+            </svg>
+          </div>
+          <div class="home-brand-text">
+            <div class="home-title-row">
+              <h1>vibemotion</h1>
+              <span class="beta">v0.01.0</span>
+            </div>
+            <p class="home-sub">Моушн-редактор и предпросмотр проектов Alight Motion на WebGPU</p>
+          </div>
+        </div>
+
+        <div class="home-top-btns">
+          <button id="home-settings-btn" class="btn icon-btn" title="Настройки интерфейса и автосохранения">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Настройки</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="home-hero">
+        <div class="home-create-card">
+          <div class="home-create-head">
+            <h2>Новый проект</h2>
+            <span class="muted">Автосохранение каждые <b id="home-autosave-label">1 мин</b></span>
+          </div>
+          <div class="home-create-form">
+            <input id="new-proj-title" type="text" placeholder="Название проекта (например, Эдит #1)" maxlength="64">
+            <select id="new-proj-preset" title="Разрешение и частота кадров">
+              <option value="1080x1920@60">9:16 Вертикальный (1080×1920 · 60 fps)</option>
+              <option value="1080x1920@120">9:16 Вертикальный (1080×1920 · 120 fps)</option>
+              <option value="1080x1080@60">1:1 Квадрат (1080×1080 · 60 fps)</option>
+              <option value="1920x1080@60">16:9 Горизонтальный (1920×1080 · 60 fps)</option>
+              <option value="1920x1080@120">16:9 Горизонтальный (1920×1080 · 120 fps)</option>
+              <option value="1080x1350@60">4:5 Пост (1080×1350 · 60 fps)</option>
+              <option value="1080x1920@30">9:16 (1080×1920 · 30 fps)</option>
+            </select>
+            <button id="home-create-btn" class="btn primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Создать проект</span>
+            </button>
+            <label class="btn" title="Импортировать XML-проект Alight Motion">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span>Импорт XML</span>
+              <input type="file" id="home-xmlfile" accept=".xml,text/xml" hidden>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-projects-sec">
+        <div class="home-sec-bar">
+          <div class="home-sec-title">
+            <h2>Ваши проекты</h2>
+            <span id="home-count" class="home-badge">0</span>
+          </div>
+          <div class="home-search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="home-search" type="search" placeholder="Поиск по проектам…">
+          </div>
+        </div>
+
+        <div id="home-grid" class="projects-grid"></div>
+        <div id="home-empty" class="home-empty" hidden>
+          <div class="home-empty-ico">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <b>Проектов пока нет</b>
+          <p>Создайте пустой проект выше или импортируйте готовый XML из Alight Motion — он сохранится автоматически.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="app" hidden>
+    <header id="top">
+      <button id="btn-home" class="btn icon-btn home-back-btn" title="Вернуться на главный экран проектов">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Проекты</span>
+      </button>
+      <div class="brand">
+        <span class="logo">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </span>
+        <span>vibemotion</span>
+        <span class="beta">v0.01.0</span>
+      </div>
+      <div class="sep"></div>
+      <div id="projname" class="projname" title="Нажмите, чтобы переименовать проект">Проект не открыт</div>
+      <span id="autosave-ind" class="autosave-ind" title="Статус автосохранения проекта"></span>
+      <div id="status"></div>
+      <div class="top-actions">
+        <label class="fps-ctl" title="Частота кадров проекта (FPS)">
+          <span>FPS</span>
+          <select id="proj-fps" aria-label="Частота кадров проекта">
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="30">30</option>
+            <option value="48">48</option>
+            <option value="50">50</option>
+            <option value="60" selected>60</option>
+            <option value="90">90</option>
+            <option value="120">120</option>
+          </select>
+        </label>
+        <label class="fps-ctl" title="Ступенчатый предпросмотр (пониженный FPS для эффекта stop-motion / tweenslop)">
+          <span>Шаг</span>
+          <select id="preview-step-fps" aria-label="Ступенчатый FPS предпросмотра">
+            <option value="0" selected>Плавно</option>
+            <option value="24">24 fps</option>
+            <option value="16">16 fps</option>
+            <option value="12">12 fps</option>
+            <option value="8">8 fps</option>
+          </select>
+        </label>
+        <button id="btn-save-now" class="btn icon-btn" title="Сохранить проект сейчас (Ctrl+S)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <span>Сохранить</span>
+        </button>
+        <label class="sw" title="Включить или выключить рендер эффектов">
+          <input type="checkbox" id="fxon" checked>
+          <span class="sw-track"></span>
+          <span class="sw-label">Эффекты</span>
+        </label>
+        <button id="btn-settings" class="btn icon-btn" title="Настройки интерфейса и рендера">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Настройки</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="work">
+      <aside id="left">
+        <div class="left-actions">
+          <label class="btn primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <span>Открыть XML</span>
+            <input type="file" id="xmlfile" accept=".xml,text/xml" hidden>
+          </label>
+          <label class="btn" title="Видео, фото или музыка (можно перетащить в окно)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Добавить медиа</span>
+            <input type="file" id="addfile" accept="video/*,image/*,audio/*" multiple hidden>
+          </label>
+        </div>
+        <h2>Файлы проекта</h2>
+        <div id="media" class="list"></div>
+        <div class="hint">Перетащите XML, видео, фото или аудио прямо в окно. Медиа добавится новым слоем на позицию курсора.</div>
+      </aside>
+
+      <main id="stage">
+        <div class="stage-frame">
+          <canvas id="canvas" width="1080" height="1080"></canvas>
+        </div>
+      </main>
+
+      <aside id="right">
+        <div id="tabs">
+          <button data-tab="layer" class="on">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            <span>Слой</span>
+          </button>
+          <button data-tab="pivot">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+            <span>Опора</span>
+          </button>
+          <button data-tab="fx">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+            <span>Эффекты</span> <span id="fxcount"></span>
+          </button>
+          <button data-tab="file">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Файл</span>
+          </button>
+        </div>
+        <div id="inspector"></div>
+      </aside>
+    </div>
+
+    <section id="timeline">
+      <div id="tl-head">
+        <div class="transport">
+          <button id="tohome" class="ico" title="В начало (Home)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+          </button>
+          <button id="prev" class="ico" title="Кадр назад (←)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button id="play" class="ico play" title="Пуск / пауза (Пробел)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+          </button>
+          <button id="next" class="ico" title="Кадр вперёд (→)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div id="time" class="time">0.000 с</div>
+        <div class="audio-ctl" title="Громкость предпросмотра (M — выключить/включить звук)">
+          <button id="mute-all" class="ico" title="Выключить / включить звук (M)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          </button>
+          <input id="master-vol" type="range" min="0" max="100" value="100">
+        </div>
+        <div class="beat-ctl">
+          <button id="beat-prev" class="ico" title="К предыдущей метке ( [ )">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+          </button>
+          <button id="beat-add" class="ico txt" title="Поставить метку бита на курсоре (B). На паузе повторное нажатие в том же месте убирает метку">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 22 12 12 22 2 12 12 2"/></svg>
+            <span>Бит</span>
+          </button>
+          <button id="key-add-now" class="ico txt" title="Добавить ключевой кадр выбранному параметру или свойству слоя на текущей позиции курсора (K)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 3 21 12 12 21 3 12 12 3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <span>+ Ключ</span>
+          </button>
+          <button id="beat-next" class="ico" title="К следующей метке ( ] )">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+          </button>
+          <span id="beat-count" class="beat-count" title="Меток битов в проекте"></span>
+          <button id="beat-clear" class="ico" title="Убрать все метки (можно вернуть через Ctrl+Z)" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+        <div class="spacer"></div>
+        <div class="zoom">
+          <button id="zoomout" class="ico" title="Уменьшить масштаб">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <input id="zoom" type="range" min="0" max="100" value="30">
+          <button id="zoomin" class="ico" title="Увеличить масштаб">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button id="fit" class="ico txt" title="Вместить весь проект">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            <span>Вместить</span>
+          </button>
+        </div>
+      </div>
+      <div id="tl-scroll">
+        <div id="tl-inner">
+          <div id="ruler"><div class="corner"></div><div id="ticks"></div></div>
+          <div id="tracks"></div>
+          <div id="playhead"><div class="cap"></div></div>
+        </div>
+        <div id="tl-empty">Откройте XML или перетащите медиафайлы</div>
+      </div>
+      <div id="tl-keys">
+        <span><b>Пробел</b> пуск</span>
+        <span><b>S</b> разрезать</span>
+        <span><b>Ctrl+D</b> дублировать</span>
+        <span><b>← →</b> кадр</span>
+        <span><b>B</b> метка бита</span>
+        <span><b>[ ]</b> к метке</span>
+        <span><b>Ctrl+Z</b> отмена</span>
+        <span><b>Alt+тянуть</b> без магнита</span>
+        <span><b>Ctrl+Shift+C / V</b> эффекты</span>
+        <span><b>Ctrl+колесо</b> масштаб</span>
+      </div>
+    </section>
+
+      </div>
+  <div id="settings-modal" class="settings-page" hidden>
+      <div class="settings-shell" role="dialog" aria-labelledby="set-title">
+        <div class="settings-top">
+          <button id="set-close" class="btn icon-btn" title="Back">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Назад</span>
+          </button>
+          <div class="settings-tab" id="set-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Настройки</span>
+          </div>
+          <span class="beta" id="set-version">v0.01.0</span>
+        </div>
+        <div class="settings-body">
+          <h3 class="set-group">Внешний вид</h3>
+          <div class="set-row">
+            <div><div class="set-name">Язык интерфейса</div><div class="muted">Английский или русский</div></div>
+            <select id="set-lang"><option value="en">English</option><option value="ru">Русский</option></select>
+          </div>
+          <div class="set-row">
+            <div><div class="set-name">Тема оформления</div><div class="muted">Тёмная или светлая палитра редактора</div></div>
+            <select id="set-theme"><option value="dark">Тёмная (по умолчанию)</option><option value="light">Светлая</option></select>
+          </div>
+          <div class="set-row">
+            <div><div class="set-name">Подсказки клавиш внизу</div><div class="muted">Отображать строку быстрых сочетаний под таймлайном</div></div>
+            <label class="sw"><input type="checkbox" id="set-hints" checked><span class="sw-track"></span></label>
+          </div>
+          <h3 class="set-group">Воспроизведение</h3>
+          <div class="set-row">
+            <div><div class="set-name">Зацикливание таймлайна</div><div class="muted">Повторять воспроизведение с начала после конца проекта</div></div>
+            <label class="sw"><input type="checkbox" id="set-loop" checked><span class="sw-track"></span></label>
+          </div>
+          <div class="set-row">
+            <div><div class="set-name">Сетка прозрачности под сценой</div><div class="muted">Показывать шахматку за прозрачными участками слоя</div></div>
+            <label class="sw"><input type="checkbox" id="set-checker"><span class="sw-track"></span></label>
+          </div>
+          <h3 class="set-group">Сохранение</h3>
+          <div class="set-row">
+            <div><div class="set-name">Интервал автосохранения</div><div class="muted">Автоматически сохранять открытый проект и медиафайлы</div></div>
+            <select id="set-autosave">
+              <option value="30000">Каждые 30 сек</option>
+              <option value="60000" selected>Раз в 1 минуту</option>
+              <option value="180000">Раз в 3 минуты</option>
+              <option value="300000">Раз в 5 минут</option>
+              <option value="0">Выключено</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <script src="parse.js"></script>
+  <script src="projects.js"></script>
+  <script src="renderer.js"></script>
+  <script src="timeline.js"></script>
+  <script src="effects.js"></script>
+  <script src="graph.js"></script>
+  <script src="fxui.js"></script>
+  <script src="beats.js"></script>
+  <script src="mediasync.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

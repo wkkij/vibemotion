@@ -1,0 +1,13 @@
+{
+  "name": "vibemotion",
+  "version": "0.01.0",
+  "description": "vibemotion: Alight Motion-style desktop editor (v0.01.0)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/eval.test.js && node test/mediasync.test.js && node test/beats.test.js && node test/newfx.test.js && node test/fxui.test.js"
+  },
+  "devDependencies": {
+    "electron": "^45.3.2"
+  }
+}
