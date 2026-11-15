@@ -3573,6 +3573,8 @@
     });
   }
 
+  // Перематывает <video> на точное время и дожидается, пока НОВЫЙ кадр реально дойдёт до композитора.
+  // Одного 'seeked' мало: importExternalTexture может ещё отдать предыдущий кадр (без всяких ошибок).
   function seekMediaElementExact(elNode, targetSec, timeoutMs) {
     return new Promise((resolve) => {
       if (!elNode || !isFinite(targetSec)) { resolve(); return; }
@@ -3582,22 +3584,35 @@
         resolve();
         return;
       }
+      const hasRvfc = elNode.tagName === 'VIDEO' && typeof elNode.requestVideoFrameCallback === 'function';
       let done = false;
+      let seeked = false;
+      let presented = !hasRvfc;
+      let graceTimer = 0;
       const finish = () => {
         if (done) return;
         done = true;
         clearTimeout(timer);
+        clearTimeout(graceTimer);
         elNode.removeEventListener('seeked', onSeeked);
         elNode.removeEventListener('error', finish);
         resolve();
       };
+      const check = () => { if (seeked && presented) finish(); };
       const onSeeked = () => {
-        if (elNode.readyState >= 2) finish();
-        else setTimeout(finish, 16);
+        if (elNode.readyState < 2) { setTimeout(finish, 16); return; }
+        seeked = true;
+        check();
+        // если новый кадр совпал с прежним, rVFC не сработает — не ждём вечно
+        if (!done) graceTimer = setTimeout(finish, 80);
       };
       const timer = setTimeout(finish, timeoutMs || 1500);
       elNode.addEventListener('seeked', onSeeked, { once: true });
       elNode.addEventListener('error', finish, { once: true });
+      if (hasRvfc) {
+        // колбэк регистрируем ДО перемотки, чтобы не пропустить кадр
+        try { elNode.requestVideoFrameCallback(() => { presented = true; check(); }); } catch (_) { presented = true; }
+      }
       try {
         elNode.currentTime = clamped;
       } catch (_) {
@@ -4165,6 +4180,15 @@
               }
             }
             if (seekJobs.length) await Promise.all(seekJobs);
+            if (window.__vmExportDebug) {
+              for (const L of S.scene.layers) {
+                const m = S.media.get(srcUri(L));
+                if (L.hidden || L.fillType !== 'media' || !m || m.kind !== 'video' || !m.el) continue;
+                if (!(curMs >= L.start && curMs < L.end + 1)) continue;
+                const want = ((L.inTime || 0) + (curMs - L.start)) / 1000;
+                console.log('[export]', L.label, 't=' + curMs.toFixed(1), 'want=' + want.toFixed(3), 'got=' + m.el.currentTime.toFixed(3), 'dur=' + m.el.duration.toFixed(3), 'rs=' + m.el.readyState);
+              }
+            }
 
             const { draws } = buildDraws(S.scene, curMs);
             const shot = await S.renderer.render(draws, S.scene.bgcolor, true);

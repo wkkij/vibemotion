@@ -758,7 +758,7 @@ fn fs_geo(v: V) -> @location(0) vec4f {
       let pipe, bg;
       let ext = null;
       if (d.video) {
-        try { ext = device.importExternalTexture({ source: d.video }); } catch (err) { ext = null; } // кадр ещё не готов -> шахматка
+        try { ext = device.importExternalTexture({ source: d.video }); } catch (err) { ext = null; if (!this._warnedExt) { this._warnedExt = true; console.warn('importExternalTexture не удался (слой рисуется шахматкой):', err && err.message); } } // кадр ещё не готов -> шахматка
       }
       if (ext) {
         pipe = pVideo;

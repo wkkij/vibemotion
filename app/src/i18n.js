@@ -382,7 +382,7 @@
     });
   }
 
-  window.VM_VERSION = '0.01.0';
+  window.VM_VERSION = '0.01.1';
   window.vmI18n = { ask, tr, setLang, getLang: () => lang, apply };
   window.addEventListener('DOMContentLoaded', () => { apply(); start(); });
 })();

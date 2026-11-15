@@ -1,7 +1,7 @@
 {
   "name": "vibemotion",
-  "version": "0.01.0",
-  "description": "vibemotion: Alight Motion-style desktop editor (v0.01.0)",
+  "version": "0.01.1",
+  "description": "vibemotion: Alight Motion-style desktop editor (v0.01.1 hotfix)",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
