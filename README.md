@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img src="Docs/a.jpg" alt="vibemotion: интерфейс редактора" width="860">
+  <img src="Docs/photo.jpg" alt="vibemotion: интерфейс редактора" width="860">
 </p>
 
 ---
